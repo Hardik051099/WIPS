@@ -1,4 +1,4 @@
-package com.example.wips
+package com.example.wips.Activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +11,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import com.example.wips.Activities.Admin.Buildings
+import com.example.wips.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -23,7 +25,8 @@ class Login : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
     lateinit var signup: Button
-    lateinit var login:Button
+    lateinit var login :Button
+    lateinit var dlogin :Button
     lateinit var hideshowimg: ImageView
     lateinit var passwordtext: EditText
     lateinit var emailtext: EditText
@@ -41,6 +44,7 @@ class Login : AppCompatActivity() {
 
         signup = findViewById(R.id.Signup)
         login = findViewById(R.id.Login)
+        dlogin = findViewById(R.id.demo)
         var hideshow: Boolean = true
         hideshowimg = findViewById(R.id.hideshowimg2)
         passwordtext = findViewById(R.id.pwd_edittext)
@@ -61,11 +65,18 @@ class Login : AppCompatActivity() {
             }
         }
 
+        dlogin.setOnClickListener {
+            startActivity(Intent(this@Login, Buildings::class.java))
+        }
+
+
+
+
         signup.setOnClickListener {
             startActivity(Intent(this@Login, Signup::class.java))
         }
         login.setOnClickListener {
-            Login(View(this))
+            startActivity(Intent(this@Login, Buildings::class.java))
         }
     }
 

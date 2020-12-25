@@ -1,13 +1,13 @@
-package com.example.wips
+package com.example.wips.Activities.Ui
 
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.wips.Activities.Login
+import com.example.wips.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             override fun onAnimationStart(animation: Animation) {
             }
             override fun onAnimationEnd(animation: Animation) {
-                startActivity(Intent(this@MainActivity,Login::class.java))
+                startActivity(Intent(this@MainActivity, Login::class.java))
                 finish()
             }
             override fun onAnimationRepeat(animation: Animation) {
