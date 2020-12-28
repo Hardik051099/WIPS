@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import com.example.wips.Activities.Admin.Buildings
+import com.example.wips.Activities.User.Search_Place
 import com.example.wips.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -66,7 +67,7 @@ class Login : AppCompatActivity() {
         }
 
         dlogin.setOnClickListener {
-            startActivity(Intent(this@Login, Buildings::class.java))
+            startActivity(Intent(this@Login, Search_Place::class.java))
         }
 
 
