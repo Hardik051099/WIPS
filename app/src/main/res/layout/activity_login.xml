@@ -7,6 +7,19 @@
     android:background="#000000"
     tools:context=".Activities.Login">
 
+    <Button
+        android:id="@+id/demoadmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rotation="8"
+        android:rotationY="17"
+        android:text="Demo Login admin"
+        app:layout_constraintBottom_toTopOf="@+id/demouser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Signup" />
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
@@ -188,17 +201,16 @@
         app:srcCompat="@drawable/white_circle" />
 
     <Button
-        android:id="@+id/demo"
+        android:id="@+id/demouser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="103dp"
         android:layout_marginTop="115dp"
         android:layout_marginEnd="149dp"
         android:layout_marginBottom="64dp"
-        android:rotation="137"
-        android:rotationX="137"
+        android:rotation="8"
         android:rotationY="17"
-        android:text="Demo Login"
+        android:text="Demo Login user"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView8"

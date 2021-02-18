@@ -1,6 +1,9 @@
 package com.example.wips.Activities
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
@@ -11,9 +14,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.wips.Activities.Admin.Buildings
+import com.example.wips.Activities.Admin.Newbuilding
 import com.example.wips.Activities.User.Search_Place
-import com.example.wips.Activities.User.User_home
 import com.example.wips.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -28,7 +33,8 @@ class Login : AppCompatActivity() {
 
     lateinit var signup: Button
     lateinit var login :Button
-    lateinit var dlogin :Button
+    lateinit var dloginuser :Button
+    lateinit var dloginadmin :Button
     lateinit var hideshowimg: ImageView
     lateinit var passwordtext: EditText
     lateinit var emailtext: EditText
@@ -46,12 +52,27 @@ class Login : AppCompatActivity() {
 
         signup = findViewById(R.id.Signup)
         login = findViewById(R.id.Login)
-        dlogin = findViewById(R.id.demo)
+        dloginuser = findViewById(R.id.demouser)
+        dloginadmin = findViewById(R.id.demoadmin)
         var hideshow: Boolean = true
         hideshowimg = findViewById(R.id.hideshowimg2)
         passwordtext = findViewById(R.id.pwd_edittext)
         emailtext = findViewById(R.id.email_edittext)
 
+        //If App has not allowed Wifi permission then ask for it
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+                != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    1
+            )
+
+        }
         //Hiding and showing Password
         hideshowimg.setOnClickListener {
             if (hideshow) {
@@ -67,8 +88,11 @@ class Login : AppCompatActivity() {
             }
         }
 
-        dlogin.setOnClickListener {
-            startActivity(Intent(this@Login, User_home::class.java))
+        dloginuser.setOnClickListener {
+            startActivity(Intent(this@Login, Search_Place::class.java))
+        }
+        dloginadmin.setOnClickListener {
+            startActivity(Intent(this@Login, Newbuilding::class.java))
         }
 
 
@@ -134,5 +158,33 @@ class Login : AppCompatActivity() {
             loginAccount(email,password)
         }
 
+    }
+
+    //Code for granting permission from user for wifi
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1) {
+            if (grantResults.count() > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(
+                        this,
+                        "Wifi Permission Granted",
+                        Toast.LENGTH_SHORT
+                )
+                        .show()
+            } else {
+                Toast.makeText(
+                        this,
+                        "Wifi Permission Denied",
+                        Toast.LENGTH_SHORT
+                )
+                        .show()
+            }
+        }
     }
 }
