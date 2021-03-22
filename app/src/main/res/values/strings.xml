@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WIPS</string>
     <string name="Forgot_pwd"><u>Forgot Username/Password</u></string>
+    <string name="card2_desc">Request for others location</string>
 </resources>

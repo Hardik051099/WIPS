@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import com.example.wips.Activities.Admin.Buildings
 import com.example.wips.Activities.Admin.Newbuilding
 import com.example.wips.Activities.User.Search_Place
+import com.example.wips.Activities.User.User_home
 import com.example.wips.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -89,7 +90,7 @@ class Login : AppCompatActivity() {
         }
 
         dloginuser.setOnClickListener {
-            startActivity(Intent(this@Login, Search_Place::class.java))
+            startActivity(Intent(this@Login, User_home::class.java))
         }
         dloginadmin.setOnClickListener {
             startActivity(Intent(this@Login, Newbuilding::class.java))
