@@ -1,6 +1,8 @@
 package com.example.wips.Activities.User
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,10 +14,12 @@ import android.widget.*
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wips.Activities.Admin.Buildings
+import com.example.wips.Activities.Login
 import com.example.wips.Models.Map
 import com.example.wips.R
 import com.example.wips.Utils.Database
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import showCustomToast
 
 class User_home : AppCompatActivity() {
@@ -32,7 +36,6 @@ class User_home : AppCompatActivity() {
 
     lateinit var navimg: ImageView
     lateinit var navigation_view:NavigationView
-    lateinit var drawer_layout:DrawerLayout
 
 
     @SuppressLint("WrongConstant")
@@ -44,8 +47,8 @@ class User_home : AppCompatActivity() {
 
         navimg = findViewById<ImageView>(R.id.navimg)
         navigation_view = findViewById(R.id.navigation_view)
+        val navDrawer: DrawerLayout = findViewById(R.id.drawerlayout)
         navimg.setOnClickListener {
-            val navDrawer: DrawerLayout = findViewById(R.id.drawerlayout)
             // If the navigation drawer is not open then open it, if its already open then close it.
             // If the navigation drawer is not open then open it, if its already open then close it.
             if (!navDrawer.isDrawerOpen(Gravity.START)) navDrawer.openDrawer(Gravity.START)
@@ -54,17 +57,22 @@ class User_home : AppCompatActivity() {
 
         navigation_view.setNavigationItemSelectedListener{
             when (it.itemId){
-                R.id.action_changeplace->{}
+                R.id.action_changeplace->{
+                    startActivity(Intent(this, Search_Place::class.java))
+                }
+
                 R.id.action_privacy ->{}
                 R.id.action_report ->{}
                 R.id.action_logout ->{
-                    // Multiline action
-                    drawer_layout.setBackgroundColor(Color.RED)
+                    getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit()
+                            .putBoolean("isLoggedin", false).apply()
+                    FirebaseAuth.getInstance().signOut()
+                    startActivity(Intent(this,Login::class.java))
                 }
 
             }
             // Close the drawer
-            drawer_layout.closeDrawer(GravityCompat.START)
+            navDrawer.closeDrawer(GravityCompat.START)
             true
         }
 
@@ -86,13 +94,15 @@ class User_home : AppCompatActivity() {
         card2_title.setText("Search")
         card2_desc.setText("Find someone")
 
-        database = Database()
 
         myCard1.setOnClickListener{
-            Toast(this).showCustomToast("Entered Navigation", true, this)
-            database.add_place("Atharva college" , "123")
-            database.add_building("123","Engineering building","0")
 
+            Toast.makeText(this, "Entered navigation", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Navigation::class.java))
+        }
+
+        myCard2.setOnClickListener{
+            startActivity(Intent(this,Search_user::class.java))
         }
 
     }

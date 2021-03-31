@@ -1,6 +1,7 @@
 package com.example.wips.Activities
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -60,6 +61,8 @@ class Login : AppCompatActivity() {
         passwordtext = findViewById(R.id.pwd_edittext)
         emailtext = findViewById(R.id.email_edittext)
 
+        val isLoggedin = getSharedPreferences("Loggedin", Context.MODE_PRIVATE).getBoolean("isLoggedin", false)
+
         //If App has not allowed Wifi permission then ask for it
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(
                         this,
@@ -90,7 +93,7 @@ class Login : AppCompatActivity() {
         }
 
         dloginuser.setOnClickListener {
-            startActivity(Intent(this@Login, User_home::class.java))
+            Login(View(this))
         }
         dloginadmin.setOnClickListener {
             startActivity(Intent(this@Login, Newbuilding::class.java))
@@ -118,7 +121,9 @@ class Login : AppCompatActivity() {
                     {
                         // user is verified, so you can finish this activity or send user to activity which you want.
                         Toast(this).showCustomToast ("Login successfull",true, this)
-
+                        getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit()
+                                .putBoolean("isLoggedin", true).apply()
+                        startActivity(Intent(this@Login, User_home::class.java))
                     }
                     else
                     {

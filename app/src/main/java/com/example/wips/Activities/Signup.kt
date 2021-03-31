@@ -1,5 +1,6 @@
 package com.example.wips.Activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -11,8 +12,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import com.example.wips.Activities.User.User_home
 import com.example.wips.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import showCustomToast
@@ -40,7 +43,8 @@ class Signup : AppCompatActivity() {
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
-
+        database = FirebaseDatabase.getInstance()
+        databaseRef = database.getReference()
 
         var hideshow:Boolean = true
         hideshowimg = findViewById(R.id.hideshowimg)
@@ -84,6 +88,14 @@ class Signup : AppCompatActivity() {
                                 Toast(this).showCustomToast ("A confirmation mail has been sent!",true, this)
                                 Log.d("Email", "Email sent.")
                                 //Opens email app
+
+                                val user = auth.currentUser
+                                if (user != null) {
+                                    databaseRef.child("AllUsers").child("Users").child(user.uid).child("Username").setValue(name)
+                                    databaseRef.child("AllUsers").child("Users").child(user.uid).child("UserID").setValue(user.uid)
+                                    databaseRef.child("AllUsers").child("Users").child(user.uid).child("Email").setValue(email)
+                                }
+
                                 Handler().postDelayed(Runnable {
                                     val intent =
                                         packageManager.getLaunchIntentForPackage("com.google.android.gm")
@@ -111,6 +123,7 @@ class Signup : AppCompatActivity() {
             }
 
     }
+
     fun Signup (v: View){
         if (emailtext.text.isNullOrEmpty() || passwordtext.text.isNullOrEmpty() || usernametext.text.isNullOrEmpty())
         {
