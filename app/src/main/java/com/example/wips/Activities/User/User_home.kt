@@ -62,7 +62,10 @@ class User_home : AppCompatActivity() {
                 }
 
                 R.id.action_privacy ->{}
-                R.id.action_report ->{}
+                R.id.action_report ->{
+                    startActivity(Intent(this, report_issue::class.java))
+                }
+
                 R.id.action_logout ->{
                     getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit()
                             .putBoolean("isLoggedin", false).apply()
