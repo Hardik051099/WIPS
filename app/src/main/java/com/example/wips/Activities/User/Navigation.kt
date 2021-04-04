@@ -1,5 +1,6 @@
 package com.example.wips.Activities.User
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.WorkSource
 import android.util.Log
@@ -14,8 +15,8 @@ class Navigation : AppCompatActivity() {
     lateinit var currentplace:String
     lateinit var navigateplace:String
 
-    lateinit var source: EditText
-    lateinit var desti:EditText
+    lateinit var source: TextView
+    lateinit var desti:TextView
     lateinit var navbtn:Button
 
     lateinit var cmd_img:ImageView
@@ -38,16 +39,18 @@ class Navigation : AppCompatActivity() {
         txtv_floor=findViewById(R.id.txt_floor)
         txtv_building=findViewById(R.id.txt_building)
 
-      /*  navigateplace = intent.getStringExtra("Navplace").toString()
-        Log.i("Nav",navigateplace)
-        if (!navigateplace.isNullOrBlank()){
-            desti.setText(navigateplace)
-        }*/
+        currentplace= current_path
+        source.setText(currentplace.substringAfter("/").replace("/",", "))
+        source.setEnabled(false)
 
-
-        currentplace="Atharva Institute/Engineering Building/4/OS LAB/"
-        navigateplace="Thakur Institute/HM Building/2/OS LAB/"
-
+        if (!navigation_path.isNullOrEmpty()){
+            navigateplace= navigation_path
+            desti.setText(navigateplace.substringAfter("/").replace("/",", "))
+        }
+        desti.setOnClickListener {
+            startActivity(Intent(this,Find_Destination::class.java))
+            finish()
+        }
 
         navbtn.setOnClickListener {
             navigate()

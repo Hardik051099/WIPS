@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WIPS">
-        <activity android:name=".Activities.Admin.Campus"></activity>
+        <activity android:name=".Activities.User.Find_Destination"></activity>
+        <activity android:name=".Activities.Admin.Campus" />
         <activity android:name=".Activities.Admin.BuildingMap" />
         <activity android:name=".Activities.User.Search_user" />
         <activity android:name=".Activities.User.Navigation" />

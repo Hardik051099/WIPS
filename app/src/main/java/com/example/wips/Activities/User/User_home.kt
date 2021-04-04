@@ -21,6 +21,8 @@ import com.example.wips.Utils.Database
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import showCustomToast
+var current_path:String = ""   //Globally Declared ,can be used in any activity
+var navigation_path:String = ""   //Globally Declared ,can be used in any activity
 
 class User_home : AppCompatActivity() {
 
@@ -48,6 +50,8 @@ class User_home : AppCompatActivity() {
         current_location = findViewById(R.id.Locationtext_userhome)
         current_campus = getSharedPreferences("Campus_db", Context.MODE_PRIVATE).getString("Campus_db_value", "Unknown")
         current_location.text = "Location: " + current_campus
+
+        current_path = "campus1/Rajkishan Building/3/room no 201"//This path will get stored in variable as well as on db
 
 
 
@@ -107,14 +111,26 @@ class User_home : AppCompatActivity() {
 
 
         myCard1.setOnClickListener{
-
-            Toast.makeText(this, "Entered navigation", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, Navigation::class.java))
+            if(!current_path.isNullOrEmpty()){
+                startActivity(Intent(this, Navigation::class.java))
+            }
         }
 
         myCard2.setOnClickListener{
-            startActivity(Intent(this,Search_user::class.java))
+            if(!current_path.isNullOrEmpty()){
+                startActivity(Intent(this,Search_user::class.java))
+            }
         }
 
+
+
+    }
+
+    //Use this function to find current position
+    fun findposition(){
+        //current_campus : Search for values in this campus
+        // make a variable name current_path having String in format "Campus name/Building name/Floor no./Room name"
+        //Eg.
+        current_path = "campus1/Rajkishan Building/3/room no 201"  //make it default "Null"
     }
 }
