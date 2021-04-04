@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.wips.Activities.Admin.WifiScanner;
 import com.example.wips.Models.WifiListModel;
 import com.example.wips.R;
 
@@ -15,9 +16,13 @@ import java.util.List;
 
 public class WifiListAdapter extends RecyclerView.Adapter<WifiListAdapter.MyViewHolder> {
     private List<WifiListModel> mModelList;
+    private WifiScanner context;
+    private boolean selectAll = false;
 
-    public WifiListAdapter(List<WifiListModel> modelList) {
+
+    public WifiListAdapter(List<WifiListModel> modelList, WifiScanner context) {
         mModelList = modelList;
+        this.context=context;
     }
 
     @Override
@@ -35,15 +40,40 @@ public class WifiListAdapter extends RecyclerView.Adapter<WifiListAdapter.MyView
         holder.wifi_name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                model.setSelected(!model.isSelected());
-                holder.view.setBackgroundColor(model.isSelected() ? Color.CYAN : Color.WHITE);
+              //  if (!(model.getWifi_name().equals("No Wifi Available"))) {
+                    model.setSelected(!model.isSelected());
+                    holder.view.setBackgroundColor(model.isSelected() ? Color.CYAN : Color.WHITE);
+                   // isAnyItemSelected();
+               // }
             }
         });
+        if (selectAll){
+            for (WifiListModel item : mModelList) {
+               item.setSelected(true);
+                holder.view.setBackgroundColor(Color.CYAN);
+            }
+            selectAll = false;
+        }
+      //  boolean flag = isAnyItemSelected();
     }
 
     @Override
     public int getItemCount() {
         return mModelList == null ? 0 : mModelList.size();
+    }
+
+    public boolean isAnyItemSelected() {
+        boolean flagdemo = false;
+        for (WifiListModel item : mModelList) {
+            if (item.isSelected()) {
+                flagdemo = true;
+            }
+        }
+        return flagdemo;
+    }
+    public void setSelectAll(){
+        selectAll = true;
+        notifyDataSetChanged();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

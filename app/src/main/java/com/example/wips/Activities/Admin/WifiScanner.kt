@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,12 +18,16 @@ import com.example.wips.Adapters.WifiListAdapter
 import com.example.wips.Models.WifiListModel
 import com.example.wips.R
 
-class Newbuilding : AppCompatActivity() {
+class WifiScanner : AppCompatActivity() {
 
     lateinit var newbuild : Button
     lateinit var refresh : Button
+    lateinit var selectall: Button
+
+    lateinit var path: TextView
+
     lateinit var wifilist : RecyclerView
-    lateinit var adapter : RecyclerView.Adapter<WifiListAdapter.MyViewHolder>
+    lateinit var adapter : WifiListAdapter
     lateinit var layoutManager: RecyclerView.LayoutManager
     var wifiscanlist: List<ScanResult> = listOf()
      var mWifiManager : WifiManager? = null
@@ -30,10 +35,14 @@ class Newbuilding : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_newbuilding)
+        setContentView(R.layout.activity_wifiscanner)
         newbuild = findViewById(R.id.addap)
         wifilist = findViewById(R.id.wifilist)
+        path = findViewById(R.id.path)
+        val intentpath = intent.getStringExtra("path")
+        path.text = intentpath
         refresh = findViewById(R.id.refresh)
+        selectall = findViewById(R.id.selectall)
         wifidata = ArrayList<WifiListModel>()
         mWifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         if(!(mWifiManager!!.isWifiEnabled)){
@@ -44,7 +53,7 @@ class Newbuilding : AppCompatActivity() {
 
         if (wifiscanlist.isEmpty()){
             wifidata.add(WifiListModel("No Wifi Available", "Check Your Wifi Connection"))
-            adapter = WifiListAdapter(wifidata)
+            adapter = WifiListAdapter(wifidata,WifiScanner())
             wifilist.adapter = adapter
             layoutManager = LinearLayoutManager(this)
             wifilist.layoutManager = layoutManager
@@ -53,9 +62,19 @@ class Newbuilding : AppCompatActivity() {
         refresh.setOnClickListener {
             scanWifi()
         }
-
+        selectall.setOnClickListener {
+            adapter.setSelectAll()
+        }
+        newbuild.setOnClickListener {
+            var selectedData: ArrayList<WifiListModel> = ArrayList<WifiListModel>()
+            for (i in wifidata){
+                if (i.isSelected){
+                    selectedData.add(i)
+                }
+            }
+            val intent = Intent()
+        }
     }
-
 
 
 
@@ -79,6 +98,8 @@ class Newbuilding : AppCompatActivity() {
                 for (scanResult in wifiscanlist) {
                     val level = WifiManager.calculateSignalLevel(mWifiManager!!.getConnectionInfo().getRssi(),
                             scanResult.level)
+                    val power = (27.55-(20*(Math.log(scanResult.frequency.toDouble()))+level)/20)
+                    val strength = Math.pow(10.0,power)
                     wifidata.add(WifiListModel(scanResult.SSID, level.toString()))
                     adapter.notifyDataSetChanged()
                 }
@@ -90,17 +111,7 @@ class Newbuilding : AppCompatActivity() {
             Log.i("wifiscan ", wifiscanlist.toString())
         }
     }
-    /*private fun scanSuccess() {
-        wifiscanlist = mWifiManager!!.scanResults
-        wifidata.clear()
-        for (scanResult in wifiscanlist) {
-            wifidata.add(WifiListModel(scanResult.SSID,scanResult.capabilities))
-            adapter.notifyDataSetChanged()
-        }
-        Log.i("wifidata succ", wifidata.toString() + wifiscanlist.toString() + mWifiManager!!.scanResults.toString())
-        adapter.notifyDataSetChanged()
-    }
-*/
+
     private fun scanFailure() {
         // handle failure: new scan did NOT succeed
         // consider using old scan results: these are the OLD results!
@@ -113,5 +124,6 @@ class Newbuilding : AppCompatActivity() {
         Log.i("wifidata fail", wifidata.toString())
         adapter.notifyDataSetChanged()
     }
+
 
 }

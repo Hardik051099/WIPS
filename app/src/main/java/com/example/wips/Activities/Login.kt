@@ -17,9 +17,9 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.wips.Activities.Admin.BuildingMap
 import com.example.wips.Activities.Admin.Buildings
-import com.example.wips.Activities.Admin.Newbuilding
-import com.example.wips.Activities.User.Search_Place
+import com.example.wips.Activities.Admin.Campus
 import com.example.wips.Activities.User.User_home
 import com.example.wips.R
 import com.google.firebase.auth.FirebaseAuth
@@ -96,7 +96,7 @@ class Login : AppCompatActivity() {
             Login(View(this))
         }
         dloginadmin.setOnClickListener {
-            startActivity(Intent(this@Login, Newbuilding::class.java))
+            startActivity(Intent(this@Login, BuildingMap::class.java))
         }
 
 
@@ -106,7 +106,7 @@ class Login : AppCompatActivity() {
             startActivity(Intent(this@Login, Signup::class.java))
         }
         login.setOnClickListener {
-            startActivity(Intent(this@Login, Buildings::class.java))
+            startActivity(Intent(this@Login, Campus::class.java))
         }
     }
 
