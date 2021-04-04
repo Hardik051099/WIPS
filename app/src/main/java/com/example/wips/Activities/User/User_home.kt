@@ -37,11 +37,19 @@ class User_home : AppCompatActivity() {
     lateinit var navimg: ImageView
     lateinit var navigation_view:NavigationView
 
+    lateinit var current_campus: String                 //This variable is having campus name use this to fetch values from db
+    lateinit var current_location: TextView
 
     @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_home)
+
+        current_location = findViewById(R.id.Locationtext_userhome)
+        current_campus = getSharedPreferences("Campus_db", Context.MODE_PRIVATE).getString("Campus_db_value", "Unknown")
+        current_location.text = "Location: " + current_campus
+
+
 
         //Following code is for navigation drawer ->
 
