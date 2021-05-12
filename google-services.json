@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "377323650494",
+    "project_id": "wips-794f5",
+    "storage_bucket": "wips-794f5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377323650494:android:f7a4bf0ff0e17e61fc0def",
+        "android_client_info": {
+          "package_name": "com.example.wips"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "377323650494-r2s6btiqpgvdkkv45b3acd4m5l1u8las.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9Xfd0AOY3B9MRRtnzwTnmyrG7dg6fM2M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "377323650494-r2s6btiqpgvdkkv45b3acd4m5l1u8las.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
