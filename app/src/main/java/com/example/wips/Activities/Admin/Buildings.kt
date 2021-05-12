@@ -43,7 +43,7 @@ class Buildings : AppCompatActivity(),OnRecyclerItemClickListener {
         calListRecycler = findViewById(R.id.calList)
         buildingList = ArrayList<CalModel>()
         db = FirebaseDatabase.getInstance()
-        dbrefer = db.getReference()
+        dbrefer = db.reference
         buildingList.add(CalModel("No Buildings Available", "", R.drawable.more))
         val campusname =intent.getStringExtra("campusName")
          campus = campusname

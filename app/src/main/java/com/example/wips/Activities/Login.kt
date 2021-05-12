@@ -17,9 +17,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.wips.Activities.Admin.BuildingMap
-import com.example.wips.Activities.Admin.Buildings
-import com.example.wips.Activities.Admin.Campus
+import com.example.wips.Activities.Admin.*
 import com.example.wips.Activities.User.User_home
 import com.example.wips.R
 import com.google.firebase.auth.FirebaseAuth
@@ -72,7 +70,7 @@ class Login : AppCompatActivity() {
         ) {
             ActivityCompat.requestPermissions(
                     this,
-                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE),
                     1
             )
 
@@ -93,10 +91,10 @@ class Login : AppCompatActivity() {
         }
 
         dloginuser.setOnClickListener {
-            Login(View(this))
+            startActivity(Intent(this@Login, User_home::class.java))
         }
         dloginadmin.setOnClickListener {
-            startActivity(Intent(this@Login, BuildingMap::class.java))
+            startActivity(Intent(this@Login, Campus::class.java))
         }
 
 
@@ -105,9 +103,10 @@ class Login : AppCompatActivity() {
         signup.setOnClickListener {
             startActivity(Intent(this@Login, Signup::class.java))
         }
-        login.setOnClickListener {
-            startActivity(Intent(this@Login, Campus::class.java))
-        }
+      /*  login.setOnClickListener {
+            // startActivity(Intent(this@Login, Campus::class.java))
+
+        }*/
     }
 
     fun loginAccount (email:String,password:String) {

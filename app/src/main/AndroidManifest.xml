@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -16,9 +19,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WIPS">
-        <activity android:name=".Activities.User.Find_Destination"></activity>
+        <activity android:name=".Activities.Admin.Calibarate_data"></activity>
         <activity android:name=".Activities.Admin.Campus" />
         <activity android:name=".Activities.Admin.BuildingMap" />
+        <activity android:name=".Activities.User.report_issue" />
         <activity android:name=".Activities.User.Search_user" />
         <activity android:name=".Activities.User.Navigation" />
         <activity android:name=".Activities.Admin.WifiScanner" />

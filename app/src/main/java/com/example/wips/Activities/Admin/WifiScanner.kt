@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.os.Message
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -32,7 +33,7 @@ class WifiScanner : AppCompatActivity() {
     var wifiscanlist: List<ScanResult> = listOf()
      var mWifiManager : WifiManager? = null
     lateinit var wifidata: ArrayList<WifiListModel>
-
+    var prevValue:HashMap<String,Int> = hashMapOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wifiscanner)
@@ -52,7 +53,7 @@ class WifiScanner : AppCompatActivity() {
         }
 
         if (wifiscanlist.isEmpty()){
-            wifidata.add(WifiListModel("No Wifi Available", "Check Your Wifi Connection"))
+            wifidata.add(WifiListModel("No Wifi Available","0", "Check Your Wifi Connection"))
             adapter = WifiListAdapter(wifidata,WifiScanner())
             wifilist.adapter = adapter
             layoutManager = LinearLayoutManager(this)
@@ -66,28 +67,38 @@ class WifiScanner : AppCompatActivity() {
             adapter.setSelectAll()
         }
         newbuild.setOnClickListener {
-            var selectedData: ArrayList<WifiListModel> = ArrayList<WifiListModel>()
+            var selectedData: ArrayList<String> = ArrayList()
+            var selectedDatabssid: ArrayList<String> = ArrayList()
             for (i in wifidata){
                 if (i.isSelected){
-                    selectedData.add(i)
+                    selectedData.add(i.wifi_name)
+                    selectedDatabssid.add(i.wifi_name+"%$"+i.bssid)
                 }
             }
-            val intent = Intent()
+            if(selectedData.size < 3 ){
+                Toast.makeText(this,"Please Select At least 3 Wifi Access Points",Toast.LENGTH_LONG).show()
+            }
+            else{
+            val intent = Intent(this@WifiScanner,Calibarate_data::class.java)
+             intent.putStringArrayListExtra("APs",selectedData)
+                intent.putStringArrayListExtra("BPs",selectedDatabssid)
+                intent.putExtra("path",intentpath)
+
+
+             startActivity(intent)
+            }
         }
     }
 
 
 
     private fun scanWifi(){
-            val intentFilter = IntentFilter()
-            intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
-            applicationContext.registerReceiver(wifiScanReceiver, intentFilter)
-           /* val intentFilter2 = IntentFilter()
-            intentFilter.addAction(WifiManager.RSSI_CHANGED_ACTION)
-            applicationContext.registerReceiver(wifiScanReceiver, intentFilter2)*/
-            mWifiManager!!.startScan()
-            Toast.makeText(this, "Scanning WiFi ...", Toast.LENGTH_SHORT).show()
-        }
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
+        applicationContext.registerReceiver(wifiScanReceiver, intentFilter)
+        mWifiManager!!.startScan()
+        Toast.makeText(this, "Scanning WiFi ...", Toast.LENGTH_SHORT).show()
+    }
     val wifiScanReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
@@ -96,11 +107,22 @@ class WifiScanner : AppCompatActivity() {
             if (success) {
                 wifidata.clear()
                 for (scanResult in wifiscanlist) {
-                    val level = WifiManager.calculateSignalLevel(mWifiManager!!.getConnectionInfo().getRssi(),
+
+                    var level = WifiManager.calculateSignalLevel(mWifiManager!!.getConnectionInfo().getRssi(),
                             scanResult.level)
-                    val power = (27.55-(20*(Math.log(scanResult.frequency.toDouble()))+level)/20)
-                    val strength = Math.pow(10.0,power)
-                    wifidata.add(WifiListModel(scanResult.SSID, level.toString()))
+                    if (level < 0){
+                        prevValue.put(scanResult.SSID,level)
+                        Log.i("prevvalue",prevValue.toString())
+                    }
+                    /*val power = (27.55-(20*(Math.log(scanResult.frequency.toDouble()))+level)/20)
+                    val strength = Math.pow(10.0,power)*/
+                    if(level > 0){
+                        level = prevValue.get(scanResult.SSID)!!
+                        Log.i("prevvalue2",prevValue.toString()+" -- $level")
+
+                    }
+                    wifidata.add(WifiListModel(scanResult.SSID,scanResult.BSSID,level.toString()))
+                    Log.i("bssid",scanResult.BSSID)
                     adapter.notifyDataSetChanged()
                 }
                 Log.i("wifidata succ", wifidata.toString() + wifiscanlist.toString() + mWifiManager!!.scanResults.toString())
@@ -118,12 +140,11 @@ class WifiScanner : AppCompatActivity() {
         wifiscanlist = mWifiManager!!.scanResults
         wifidata.clear()
         for (scanResult in wifiscanlist) {
-            wifidata.add(WifiListModel(scanResult.SSID, scanResult.BSSID))
+            wifidata.add(WifiListModel(scanResult.SSID, scanResult.BSSID, scanResult.frequency.toString()))
             adapter.notifyDataSetChanged()
         }
         Log.i("wifidata fail", wifidata.toString())
         adapter.notifyDataSetChanged()
     }
-
 
 }

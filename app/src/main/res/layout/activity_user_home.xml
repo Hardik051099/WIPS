@@ -8,7 +8,6 @@
     tools:context=".Activities.User.User_home">
 
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/secondary_layout"
         android:layout_width="0dp"
@@ -21,11 +20,23 @@
         app:layout_constraintTop_toBottomOf="@+id/primary_layout">
 
 
+        <Button
+            android:id="@+id/locateme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Locate Me!"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/background_layout"
             android:padding="5dp"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
@@ -161,8 +172,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Scanning ........"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:text="Welcome..."
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:textColor="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -184,6 +195,17 @@
                 app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/wifiicon" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="167dp"
+            android:layout_height="137dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.navigation.NavigationView
@@ -193,7 +215,7 @@
             android:background="@color/Gray"
             android:layout_gravity="start"
             app:itemTextAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:itemTextColor="@color/white"
+            app:itemTextColor="@color/purple_200"
             app:menu="@menu/drawer_items" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

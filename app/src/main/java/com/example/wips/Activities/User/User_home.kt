@@ -1,26 +1,32 @@
 package com.example.wips.Activities.User
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
+import android.content.IntentFilter
+import android.net.wifi.ScanResult
+import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.text.Layout
+import android.os.Handler
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.wips.Activities.Admin.Buildings
 import com.example.wips.Activities.Login
 import com.example.wips.Models.Map
+import com.example.wips.Models.WifiListModel
 import com.example.wips.R
 import com.example.wips.Utils.Database
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import showCustomToast
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
+import uk.co.samuelwall.materialtaptargetprompt.extras.focals.RectanglePromptFocal
 var current_path:String = ""   //Globally Declared ,can be used in any activity
 var navigation_path:String = ""   //Globally Declared ,can be used in any activity
 
@@ -29,18 +35,27 @@ class User_home : AppCompatActivity() {
     lateinit var card1_img: ImageView
     lateinit var  card1_title: TextView
     lateinit var  card1_desc: TextView
-
+    lateinit var locateme: Button
     lateinit var card2_img: ImageView
     lateinit var  card2_title: TextView
     lateinit var  card2_desc: TextView
-
+    lateinit var progressBar:ProgressBar
     lateinit var database: Database
 
     lateinit var navimg: ImageView
     lateinit var navigation_view:NavigationView
-
+    lateinit var db:FirebaseDatabase
+    lateinit var dbrefer:DatabaseReference
     lateinit var current_campus: String                 //This variable is having campus name use this to fetch values from db
     lateinit var current_location: TextView
+
+    var wifiscanlist: List<ScanResult> = listOf()
+    var mWifiManager : WifiManager? = null
+    lateinit var wifidata: ArrayList<WifiListModel>
+    var prevValue:HashMap<String,Int> = hashMapOf()
+    val serverData : HashMap<String, HashMap<String,String>> = HashMap()
+    val selectedData: HashMap<String,String> = HashMap()
+
 
     @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,12 +63,26 @@ class User_home : AppCompatActivity() {
         setContentView(R.layout.activity_user_home)
 
         current_location = findViewById(R.id.Locationtext_userhome)
+
+
+
         current_campus = getSharedPreferences("Campus_db", Context.MODE_PRIVATE).getString("Campus_db_value", "Unknown")
         current_location.text = "Location: " + current_campus
-
         current_path = "campus1/Rajkishan Building/3/room no 201"//This path will get stored in variable as well as on db
 
-
+        locateme= findViewById(R.id.locateme)
+        progressBar = findViewById(R.id.progressBar2)
+        progressBar.visibility = View.INVISIBLE
+        db= FirebaseDatabase.getInstance()
+        dbrefer=db.reference
+        mWifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        wifidata = ArrayList<WifiListModel>()
+        if(!(mWifiManager!!.isWifiEnabled)){
+            Toast.makeText(this, "Please Turn on Wifi and GPS", Toast.LENGTH_LONG).show()
+            val panelIntent = Intent(android.provider.Settings.ACTION_WIFI_SETTINGS)
+            startActivityForResult(panelIntent, 1)
+        }
+        scanWifi()
 
         //Following code is for navigation drawer ->
 
@@ -111,7 +140,7 @@ class User_home : AppCompatActivity() {
 
 
         myCard1.setOnClickListener{
-            if(!current_path.isNullOrEmpty()){
+            if(!current_path.isEmpty()){
                 startActivity(Intent(this, Navigation::class.java))
             }
         }
@@ -122,15 +151,157 @@ class User_home : AppCompatActivity() {
             }
         }
 
+        locateme.setOnClickListener {
+            if(current_campus == "Unknown"){
+                showCompPrompt()
+            }
+            else {
+                scanWifi()
+                locateme.isEnabled = false
+                progressBar.visibility = View.VISIBLE
+                dbrefer.child("RouterData").child(current_campus).addChildEventListener(object : ChildEventListener {
+                    override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                        Log.i("Children",snapshot.childrenCount.toString())
+                        for (datasnap in snapshot.children){
+                            val map: HashMap<String, HashMap<String,String>> = datasnap.getValue() as HashMap<String, HashMap<String,String>>
+                            Log.i("hashmap",map.toString())
+                            serverData.putAll(map)
+                        }
+
+                    }
+
+                    override fun onChildChanged(
+                        snapshot: DataSnapshot,
+                        previousChildName: String?
+                    ) {
+                        Log.i("hashmap2",serverData.toString())
+                    }
+
+                    override fun onChildRemoved(snapshot: DataSnapshot) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+
+                })
+            }
+            val handler = Handler()
+            handler.postDelayed(Runnable { // Do something after 5s = 5000ms
+
+                nearestNeighbour(wifidata,serverData)
+            }, 10000)
+
+
+        }
 
 
     }
+    private fun nearestNeighbour(wifiListModel: ArrayList<WifiListModel>,serverData:HashMap<String,HashMap<String,String>>){
+        for (i in wifiListModel){
+            for (j in serverData){
+                for (k in j.value){
+                    if(j.value.containsValue(i.bssid)){
+                        selectedData.put(j.value.get(i.wifi_name)!!,j.key)
+                        Log.i("selectionE",selectedData.toString()+"__"+i.wifi_name)
 
-    //Use this function to find current position
+                    }
+                }
+            }
+        }
+        progressBar.visibility = View.INVISIBLE
+        locateme.isEnabled = true
+        Log.i("selectionEOK",selectedData.toString()+"__"+wifiListModel.toString()+"__"+serverData.toString())
+    }
+
+    private fun scanWifi(){
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
+        applicationContext.registerReceiver(wifiScanReceiver, intentFilter)
+        mWifiManager!!.startScan()
+        Toast(this).showCustomToast ("Scanning Wifi...",true, this)
+    }
+    val wifiScanReceiver = object : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, intent: Intent) {
+            val success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false)
+            wifiscanlist = mWifiManager!!.scanResults
+            if (success) {
+                wifidata.clear()
+                for (scanResult in wifiscanlist) {
+
+                    var level = WifiManager.calculateSignalLevel(mWifiManager!!.getConnectionInfo().getRssi(),
+                            scanResult.level)
+                    if (level < 0){
+                        prevValue.put(scanResult.SSID,level)
+                        Log.i("prevvalue",prevValue.toString())
+                    }
+                    /*val power = (27.55-(20*(Math.log(scanResult.frequency.toDouble()))+level)/20)
+                    val strength = Math.pow(10.0,power)*/
+                    if(level > 0){
+                        level = prevValue.get(scanResult.SSID)!!
+                        Log.i("prevvalue2",prevValue.toString()+" -- $level")
+
+                    }
+                    wifidata.add(WifiListModel(scanResult.SSID,scanResult.BSSID,level.toString()))
+                    Log.i("bssid",scanResult.BSSID)
+                }
+                Log.i("wifidata succ", wifidata.toString() + wifiscanlist.toString() + mWifiManager!!.scanResults.toString())
+            }
+            else {
+                wifiscanlist = mWifiManager!!.scanResults
+                wifidata.clear()
+                for (scanResult in wifiscanlist) {
+                    wifidata.add(WifiListModel(scanResult.SSID, scanResult.BSSID, scanResult.frequency.toString()))
+                }
+                //Log.i("wifidata fail", wifidata.toString())
+            }
+            //Log.i("wifiscan ", wifiscanlist.toString())
+        }
+    }
+
+    private fun showCompPrompt() {
+        //RP1.setBackgroundResource(R.drawable.round_button)
+        MaterialTapTargetPrompt.Builder(this)
+            .setTarget(R.id.navimg)
+            .setPrimaryText("Click Here to open Navigation bar")
+            .setSecondaryText("You have to select your current Campus location first")
+            .setBackButtonDismissEnabled(true)
+            .setPromptStateChangeListener(MaterialTapTargetPrompt.PromptStateChangeListener { prompt, state ->
+                if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
+                    // User has pressed the prompt target
+                    showNavPrompt()
+                }
+            })
+            .show()
+    }
+
+    private fun showNavPrompt() {
+        //RP1.setBackgroundResource(R.drawable.round_button)
+        MaterialTapTargetPrompt.Builder(this)
+            .setTarget(R.id.action_changeplace)
+            .setPrimaryText("Click Here to choose your campus location")
+            .setBackButtonDismissEnabled(true)
+            .setPromptFocal(RectanglePromptFocal())
+
+            .setPromptStateChangeListener(MaterialTapTargetPrompt.PromptStateChangeListener { prompt, state ->
+                if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
+
+                }
+            })
+            .show()
+    }
+
     fun findposition(){
         //current_campus : Search for values in this campus
         // make a variable name current_path having String in format "Campus name/Building name/Floor no./Room name"
         //Eg.
         current_path = "campus1/Rajkishan Building/3/room no 201"  //make it default "Null"
     }
+
 }

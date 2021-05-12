@@ -3,7 +3,8 @@
 
     <item
         android:id="@+id/action_changeplace"
-        android:title="Change place" />
+        android:title="Choose Campus"
+        />
     <item
         android:id="@+id/action_privacy"
         android:title="Privacy" />
