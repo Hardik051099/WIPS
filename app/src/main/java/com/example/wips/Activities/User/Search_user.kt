@@ -45,7 +45,7 @@ class Search_user : AppCompatActivity() {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 Log.d("Data",p0.child("Status").getValue().toString())
                 if (p0.child("Status").getValue().toString().contains("Online")){
-                    if (p0.child("CurrentLocation").getValue().toString().substringBefore("/").contains(Campus_db)){
+                    if (p0.child("CurrentLocation").getValue().toString().substringBefore("/").contains(Campus_db.toString())){
                         namelist.add(p0.child("Username").getValue().toString())
                         locationlist.add(p0.child("CurrentLocation").getValue().toString().substringAfter("/").replace("/",","))
                         var myListAdapter = FindUserAdapter(this@Search_user, namelist.toTypedArray(), locationlist.toTypedArray())

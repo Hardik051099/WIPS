@@ -28,6 +28,7 @@
         <activity android:name=".Activities.Admin.WifiScanner" />
         <activity android:name=".Activities.User.User_home" />
         <activity android:name=".Activities.User.Search_Place" />
+        <activity android:name=".Activities.User.Find_Destination" />
         <activity android:name=".Activities.Admin.Buildings" />
         <activity android:name=".Activities.Signup" />
         <activity android:name=".Activities.Login" />

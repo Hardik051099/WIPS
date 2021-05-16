@@ -44,7 +44,7 @@ class Find_Destination : AppCompatActivity() {
         searchbar_floor = findViewById(R.id.search_view_floor)
         searchbar_place = findViewById(R.id.search_view_room)
 
-        dbrefer.child("Campus").child(Campus_db).addChildEventListener(object : ChildEventListener {
+        dbrefer.child("Campus").child(Campus_db.toString()).addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
@@ -164,7 +164,7 @@ class Find_Destination : AppCompatActivity() {
                 searchbar_building.setQuery(building_string,true)
                 searchbar_building.inputType = InputType.TYPE_NULL
                 list_item.clear()
-                dbrefer.child("Campus").child(Campus_db).child(building_string).addChildEventListener(object : ChildEventListener {
+                dbrefer.child("Campus").child(Campus_db.toString()).child(building_string).addChildEventListener(object : ChildEventListener {
                     override fun onCancelled(p0: DatabaseError) {}
                     override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
                     override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
@@ -184,7 +184,7 @@ class Find_Destination : AppCompatActivity() {
                 searchbar_floor.setQuery(floor_string,true)
                 searchbar_floor.inputType = InputType.TYPE_NULL
                 list_item.clear()
-                dbrefer.child("Campus").child(Campus_db).child(building_string).child(floor_string).addChildEventListener(object : ChildEventListener {
+                dbrefer.child("Campus").child(Campus_db.toString()).child(building_string).child(floor_string).addChildEventListener(object : ChildEventListener {
                     override fun onCancelled(p0: DatabaseError) {}
                     override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
                     override fun onChildChanged(p0: DataSnapshot, p1: String?) {}

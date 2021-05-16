@@ -17,9 +17,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wips.Activities.Login
-import com.example.wips.Models.Map
 import com.example.wips.Models.WifiListModel
 import com.example.wips.R
+import com.example.wips.Utils.CommonMapSetValues
 import com.example.wips.Utils.Database
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -27,6 +27,10 @@ import com.google.firebase.database.*
 import showCustomToast
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import uk.co.samuelwall.materialtaptargetprompt.extras.focals.RectanglePromptFocal
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+
 var current_path:String = ""   //Globally Declared ,can be used in any activity
 var navigation_path:String = ""   //Globally Declared ,can be used in any activity
 
@@ -46,7 +50,8 @@ class User_home : AppCompatActivity() {
     lateinit var navigation_view:NavigationView
     lateinit var db:FirebaseDatabase
     lateinit var dbrefer:DatabaseReference
-    lateinit var current_campus: String                 //This variable is having campus name use this to fetch values from db
+    lateinit var current_campus: String //This variable is having campus name use this to fetch values from db
+    lateinit var current_loc: String
     lateinit var current_location: TextView
 
     var wifiscanlist: List<ScanResult> = listOf()
@@ -55,6 +60,7 @@ class User_home : AppCompatActivity() {
     var prevValue:HashMap<String,Int> = hashMapOf()
     val serverData : HashMap<String, HashMap<String,String>> = HashMap()
     val selectedData: HashMap<String,String> = HashMap()
+    val routerData: HashMap<String,Int> = HashMap()
 
 
     @SuppressLint("WrongConstant")
@@ -64,10 +70,11 @@ class User_home : AppCompatActivity() {
 
         current_location = findViewById(R.id.Locationtext_userhome)
 
-
-
-        current_campus = getSharedPreferences("Campus_db", Context.MODE_PRIVATE).getString("Campus_db_value", "Unknown")
-        current_location.text = "Location: " + current_campus
+        current_campus =
+            getSharedPreferences("Campus_db", Context.MODE_PRIVATE).getString("Campus_db_value", "Unknown")
+                .toString()
+        current_loc = "Unknown"
+        current_location.text = "Campus:- $current_campus \n Location:- $current_loc"
         current_path = "campus1/Rajkishan Building/3/room no 201"//This path will get stored in variable as well as on db
 
         locateme= findViewById(R.id.locateme)
@@ -208,6 +215,7 @@ class User_home : AppCompatActivity() {
                 for (k in j.value){
                     if(j.value.containsValue(i.bssid)){
                         selectedData.put(j.value.get(i.wifi_name)!!,j.key)
+                        routerData.put(i.bssid,Integer.parseInt(i.rss))
                         Log.i("selectionE",selectedData.toString()+"__"+i.wifi_name)
 
                     }
@@ -216,8 +224,30 @@ class User_home : AppCompatActivity() {
         }
         progressBar.visibility = View.INVISIBLE
         locateme.isEnabled = true
-        Log.i("selectionEOK",selectedData.toString()+"__"+wifiListModel.toString()+"__"+serverData.toString())
+
+        var commonmapper = CommonMapSetValues(selectedData)
+        val frequencies = commonmapper.countFrequencies()
+        if(frequencies.size == 1){
+            current_loc = frequencies[0]
+            current_location.text = "Campus:- $current_campus \n Location:- $current_loc"
+            Log.i("currentLoc",current_loc+"__"+frequencies.toString())
+        }
+        else {
+            val maxValueInMap = Collections.max<Int>(routerData.values)
+            var getKey = ""
+            for (i in routerData) {  // Iterate through HashMap
+                if (i.value == maxValueInMap) {
+                    getKey = i.key
+                }
+            }
+            current_loc = selectedData.get(getKey).toString()
+            current_location.text = "Campus:- $current_campus \n Location:- $current_loc"
+            Log.i("currentLoc2",current_loc+"__"+frequencies.toString())
+        }
+
+        Log.i("selectionEOK",selectedData.toString()+"__"+routerData.toString())
     }
+
 
     private fun scanWifi(){
         val intentFilter = IntentFilter()
