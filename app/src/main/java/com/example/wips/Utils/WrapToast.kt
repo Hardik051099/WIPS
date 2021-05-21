@@ -22,6 +22,8 @@ fun Toast.showCustomToast(message: String,State:Boolean, activity: Activity)
     else{
         border.setBackgroundColor(Color.RED)
     }
+   val color = textView.resources.getColor(R.color.purple_500)
+    textView.setTextColor(color)
     textView.text = message
 
     // use the application extension function
