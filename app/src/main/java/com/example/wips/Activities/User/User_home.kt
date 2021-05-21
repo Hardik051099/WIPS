@@ -238,7 +238,7 @@ class User_home : AppCompatActivity() {
         if(frequencies.contains("LNC"))
         {
             current_location.text = "Campus:- $current_campus \n Location:- Location not Found"
-            Toast(this).showCustomToast ("Wrong Campus",false, this)
+            Toast(this).showCustomToast ("Wrong Campus or No Location found!",false, this)
             return
         }
         if(frequencies.size == 1){
