@@ -40,6 +40,7 @@ class Login : AppCompatActivity() {
     lateinit var password: String
     var role: String = ""
     lateinit var user: FirebaseUser
+    var backpress:Int = 0
 
 
 
@@ -218,6 +219,19 @@ class Login : AppCompatActivity() {
                 )
                         .show()
             }
+        }
+    }
+    override fun onBackPressed() {
+        backpress = backpress + 1
+        if (backpress > 1) {
+            val a = Intent(Intent.ACTION_MAIN)
+            a.addCategory(Intent.CATEGORY_HOME)
+            a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(a)
+        }
+        else{
+            Toast(this).showCustomToast("Press Back again to Exit",true,this)
+
         }
     }
 }

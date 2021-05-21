@@ -31,6 +31,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
+
 var current_path:String = ""   //Globally Declared ,can be used in any activity
 var navigation_path:String = ""   //Globally Declared ,can be used in any activity
 
@@ -45,6 +46,7 @@ class User_home : AppCompatActivity() {
     lateinit var  card2_desc: TextView
     lateinit var progressBar:ProgressBar
     lateinit var database: Database
+    var backpress:Int = 0
 
     lateinit var navimg: ImageView
     lateinit var navigation_view:NavigationView
@@ -360,5 +362,18 @@ class User_home : AppCompatActivity() {
 
         })
 
+    }
+
+    override fun onBackPressed() {
+        backpress = backpress + 1
+        if (backpress > 1) {
+            val a = Intent(Intent.ACTION_MAIN)
+            a.addCategory(Intent.CATEGORY_HOME)
+            a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(a)
+        }
+        else {
+                Toast(this).showCustomToast("Press Back again to Exit",true,this)
+        }
     }
 }

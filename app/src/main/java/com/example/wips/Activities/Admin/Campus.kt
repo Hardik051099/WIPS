@@ -8,6 +8,7 @@ import android.text.InputType
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,7 @@ class Campus : AppCompatActivity(),OnRecyclerItemClickListener {
     lateinit var db: FirebaseDatabase
     private var campusbuilding = ""
     private val campus = "Campus"
+    var backpress :Int = 0
 
 
 
@@ -104,5 +106,18 @@ class Campus : AppCompatActivity(),OnRecyclerItemClickListener {
         val intent = Intent(this@Campus,Buildings::class.java)
         intent.putExtra("campusName",buildingname)
         startActivity(intent)
+    }
+
+    override fun onBackPressed() {
+        backpress = backpress + 1
+        if (backpress > 1) {
+            val a = Intent(Intent.ACTION_MAIN)
+            a.addCategory(Intent.CATEGORY_HOME)
+            a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(a)
+        }
+        else{
+            Toast.makeText(this,"Press Back again to Exit",Toast.LENGTH_SHORT).show()
+        }
     }
 }
