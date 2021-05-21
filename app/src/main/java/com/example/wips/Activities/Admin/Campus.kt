@@ -50,7 +50,7 @@ class Campus : AppCompatActivity(),OnRecyclerItemClickListener {
             campusList.clear()
             dbrefer.child(campus).addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    campusList.add(CalModel(snapshot.key,"0",R.drawable.cardnav))
+                    campusList.add(CalModel(snapshot.key,"",R.drawable.campus))
                     adapter.notifyDataSetChanged()
                 }
 

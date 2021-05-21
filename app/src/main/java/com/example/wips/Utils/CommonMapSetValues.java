@@ -21,9 +21,6 @@ public class CommonMapSetValues {
     private Map<String, Set<String>> map;
     private Map<String, String> Hashmap;
 
-    public CommonMapSetValues() {
-        map = new HashMap<String, Set<String>>();
-    }
     public CommonMapSetValues(HashMap<String,String> Hashmap) {
         this.Hashmap = Hashmap;
     }
@@ -36,6 +33,11 @@ public class CommonMapSetValues {
         for (Map.Entry<String, String> i : list.entrySet()) {
             Integer j = hm.get(i.getValue());
             hm.put(i.getValue(), (j == null) ? 1 : j + 1);
+        }
+        if(hm.isEmpty()){
+            ArrayList<String> error = new ArrayList<String>();
+            error.add("LNC");
+            return error;
         }
         int maxValueInMap=(Collections.max(hm.values()));
         ArrayList<String> rooms = new ArrayList<String>();

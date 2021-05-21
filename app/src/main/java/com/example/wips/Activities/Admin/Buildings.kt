@@ -55,7 +55,7 @@ class Buildings : AppCompatActivity(),OnRecyclerItemClickListener {
             buildingList.clear()
             dbrefer.child("Campus").child(campus).addChildEventListener(object : ChildEventListener{
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    buildingList.add(CalModel(snapshot.key,"0",R.drawable.wifiicon))
+                    buildingList.add(CalModel(snapshot.key,"",R.drawable.buildings))
                     (adapter as CalAdapter).notifyDataSetChanged()
                 }
 

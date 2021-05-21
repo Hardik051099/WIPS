@@ -5,9 +5,7 @@
         android:id="@+id/action_changeplace"
         android:title="Choose Campus"
         />
-    <item
-        android:id="@+id/action_privacy"
-        android:title="Privacy" />
+
     <item
         android:id="@+id/action_report"
         android:title="Report issue" />

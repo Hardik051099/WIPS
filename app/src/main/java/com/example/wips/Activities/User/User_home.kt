@@ -53,7 +53,7 @@ class User_home : AppCompatActivity() {
     lateinit var current_campus: String //This variable is having campus name use this to fetch values from db
     lateinit var current_loc: String
     lateinit var current_location: TextView
-
+    var currentuser : String = ""
     var wifiscanlist: List<ScanResult> = listOf()
     var mWifiManager : WifiManager? = null
     lateinit var wifidata: ArrayList<WifiListModel>
@@ -69,13 +69,13 @@ class User_home : AppCompatActivity() {
         setContentView(R.layout.activity_user_home)
 
         current_location = findViewById(R.id.Locationtext_userhome)
-
+        currentuser = FirebaseAuth.getInstance().currentUser!!.uid
         current_campus =
             getSharedPreferences("Campus_db", Context.MODE_PRIVATE).getString("Campus_db_value", "Unknown")
                 .toString()
         current_loc = "Unknown"
         current_location.text = "Campus:- $current_campus \n Location:- $current_loc"
-        current_path = "campus1/Rajkishan Building/3/room no 201"//This path will get stored in variable as well as on db
+        //This path will get stored in variable as well as on db
 
         locateme= findViewById(R.id.locateme)
         progressBar = findViewById(R.id.progressBar2)
@@ -108,8 +108,6 @@ class User_home : AppCompatActivity() {
                 R.id.action_changeplace->{
                     startActivity(Intent(this, Search_Place::class.java))
                 }
-
-                R.id.action_privacy ->{}
                 R.id.action_report ->{
                     startActivity(Intent(this, report_issue::class.java))
                 }
@@ -147,9 +145,15 @@ class User_home : AppCompatActivity() {
 
 
         myCard1.setOnClickListener{
-            if(!current_path.isEmpty()){
+            if(current_path.isEmpty() || current_loc.equals("Unknown")){
+                Toast(this).showCustomToast ("Location is empty $current_path",true, this)
+                Log.e("currentpath", current_path)
+            }
+            else {
+                Log.e("currentpath", current_path)
                 startActivity(Intent(this, Navigation::class.java))
             }
+
         }
 
         myCard2.setOnClickListener{
@@ -197,6 +201,7 @@ class User_home : AppCompatActivity() {
                     }
 
                 })
+
             }
             val handler = Handler()
             handler.postDelayed(Runnable { // Do something after 5s = 5000ms
@@ -226,7 +231,14 @@ class User_home : AppCompatActivity() {
         locateme.isEnabled = true
 
         var commonmapper = CommonMapSetValues(selectedData)
+
         val frequencies = commonmapper.countFrequencies()
+        if(frequencies.contains("LNC"))
+        {
+            current_location.text = "Campus:- $current_campus \n Location:- Location not Found"
+            Toast(this).showCustomToast ("Wrong Campus",false, this)
+            return
+        }
         if(frequencies.size == 1){
             current_loc = frequencies[0]
             current_location.text = "Campus:- $current_campus \n Location:- $current_loc"
@@ -245,6 +257,7 @@ class User_home : AppCompatActivity() {
             Log.i("currentLoc2",current_loc+"__"+frequencies.toString())
         }
 
+        findposition()
         Log.i("selectionEOK",selectedData.toString()+"__"+routerData.toString())
     }
 
@@ -331,7 +344,21 @@ class User_home : AppCompatActivity() {
         //current_campus : Search for values in this campus
         // make a variable name current_path having String in format "Campus name/Building name/Floor no./Room name"
         //Eg.
-        current_path = "campus1/Rajkishan Building/3/room no 201"  //make it default "Null"
-    }
+        dbrefer.child("RoomPath").child(current_loc).child("path").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                current_path = snapshot.value.toString()
+                dbrefer.child("AllUsers").child("Users").child(currentuser).child("CurrentLocation").setValue(
+                    current_path)
+                dbrefer.child("AllUsers").child("Users").child(currentuser).child("Status").setValue(
+                    "Online")
 
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
+    }
 }

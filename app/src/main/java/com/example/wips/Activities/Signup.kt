@@ -8,10 +8,7 @@ import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import com.example.wips.Activities.User.User_home
 import com.example.wips.R
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +28,7 @@ class Signup : AppCompatActivity() {
     lateinit var emailtext:EditText
     lateinit var usernametext:EditText
     lateinit var signup:Button
+    lateinit var progressBar: ProgressBar
 
     lateinit var email: String
     lateinit var password: String
@@ -52,6 +50,8 @@ class Signup : AppCompatActivity() {
         emailtext = findViewById(R.id.email_edittext)
         usernametext =  findViewById(R.id.edittext_username)
         signup = findViewById(R.id.Signup)
+        progressBar = findViewById(R.id.signuprogress)
+        progressBar.visibility = View.INVISIBLE
 
         //Hiding and showing Password
         hideshowimg.setOnClickListener {
@@ -71,6 +71,7 @@ class Signup : AppCompatActivity() {
 
         // apply an onClickListener() method
         signup.setOnClickListener{
+            progressBar.visibility = View.VISIBLE
             Signup(View(this))
         }
     }
@@ -88,12 +89,13 @@ class Signup : AppCompatActivity() {
                                 Toast(this).showCustomToast ("A confirmation mail has been sent!",true, this)
                                 Log.d("Email", "Email sent.")
                                 //Opens email app
-
+                                progressBar.visibility = View.INVISIBLE
                                 val user = auth.currentUser
                                 if (user != null) {
                                     databaseRef.child("AllUsers").child("Users").child(user.uid).child("Username").setValue(name)
                                     databaseRef.child("AllUsers").child("Users").child(user.uid).child("UserID").setValue(user.uid)
                                     databaseRef.child("AllUsers").child("Users").child(user.uid).child("Email").setValue(email)
+                                    databaseRef.child("AllUsers").child("Users").child(user.uid).child("Role").setValue("user")
                                 }
 
                                 Handler().postDelayed(Runnable {
@@ -121,13 +123,15 @@ class Signup : AppCompatActivity() {
 
                 // ...
             }
-
+        progressBar.visibility = View.INVISIBLE
     }
 
     fun Signup (v: View){
         if (emailtext.text.isNullOrEmpty() || passwordtext.text.isNullOrEmpty() || usernametext.text.isNullOrEmpty())
         {
             Toast(this).showCustomToast ("You can't Leave a Field Empty!",false, this)
+            progressBar.visibility = View.INVISIBLE
+
         }
         else {
             email = emailtext.text.toString()
