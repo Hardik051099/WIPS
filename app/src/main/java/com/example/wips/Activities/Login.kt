@@ -30,8 +30,7 @@ class Login : AppCompatActivity() {
 
     lateinit var signup: Button
     lateinit var login :Button
-    lateinit var dloginuser :Button
-    lateinit var dloginadmin :Button
+
     lateinit var hideshowimg: ImageView
     lateinit var passwordtext: EditText
     lateinit var emailtext: EditText
@@ -53,8 +52,7 @@ class Login : AppCompatActivity() {
 
         signup = findViewById(R.id.Signup)
         login = findViewById(R.id.Login)
-        dloginuser = findViewById(R.id.demouser)
-        dloginadmin = findViewById(R.id.demoadmin)
+
         var hideshow: Boolean = true
         hideshowimg = findViewById(R.id.hideshowimg2)
         passwordtext = findViewById(R.id.pwd_edittext)
@@ -93,13 +91,6 @@ class Login : AppCompatActivity() {
                 passwordtext.setSelection(passwordtext.getText().length)
                 hideshowimg.alpha = 0.5F
             }
-        }
-
-        dloginuser.setOnClickListener {
-            startActivity(Intent(this@Login, User_home::class.java))
-        }
-        dloginadmin.setOnClickListener {
-            startActivity(Intent(this@Login, Campus::class.java))
         }
 
         signup.setOnClickListener {
