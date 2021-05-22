@@ -15,6 +15,7 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import android.widget.Toast
+import com.example.wips.Activities.Admin.Campus
 import com.example.wips.Activities.User.User_home
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         var wifi_img = findViewById<ImageView>(R.id.wifi_logo)
 
         val isLoggedin = getSharedPreferences("Loggedin", Context.MODE_PRIVATE).getBoolean("isLoggedin", false)
-
+        val role = getSharedPreferences("Loggedin_role", Context.MODE_PRIVATE).getString("role", "user")
 
 
         //Create Animation
@@ -39,7 +40,12 @@ class MainActivity : AppCompatActivity() {
             override fun onAnimationEnd(animation: Animation) {
 
                 if(isLoggedin){
-                    startActivity(Intent(this@MainActivity,User_home::class.java))
+                    if(role.equals("admin")) {
+                        startActivity(Intent(this@MainActivity, Campus::class.java))
+                    }
+                    else{
+                        startActivity(Intent(this@MainActivity, User_home::class.java))
+                    }
                 }
                 else{
                     startActivity(Intent(this@MainActivity, Login::class.java))

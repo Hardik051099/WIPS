@@ -180,10 +180,16 @@ class Login : AppCompatActivity() {
             getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit()
                 .putBoolean("isLoggedin", true).apply()
             if (role.equals("user")) {
+                getSharedPreferences("Loggedin_role", Context.MODE_PRIVATE).edit()
+                        .putString("role", "user").apply()
                 startActivity(Intent(this@Login, User_home::class.java))
+                finish()
             }
             else if(role.equals("admin")){
+                getSharedPreferences("Loggedin_role", Context.MODE_PRIVATE).edit()
+                        .putString("role", "admin").apply()
                 startActivity(Intent(this@Login, Campus::class.java))
+                finish()
             }
         }
         else
